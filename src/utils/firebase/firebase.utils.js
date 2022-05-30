@@ -5,6 +5,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   createUserWithEmailAndPassword, //method by firebase
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 //just like getAuth, we need to instantiate our firestore instance
 //doc method retrieve documents inside of our firestore database, doc get the document's instance
@@ -83,4 +84,9 @@ export const createUserDocumentFromAuth = async (
 export const createAuthUserWithEmailAndPassword = async (email, password) => {
   if (!email || !password) return;
   return await createUserWithEmailAndPassword(auth, email, password);
+};
+
+export const signInAuthUserWithEmailAndPassword = async (email, password) => {
+  if (!email || !password) return;
+  return await signInWithEmailAndPassword(auth, email, password);
 };
