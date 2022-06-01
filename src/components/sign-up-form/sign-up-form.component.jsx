@@ -21,7 +21,7 @@ const SignUpForm = () => {
 
   const { displayName, email, password, confirmPassword } = formFields;
 
-  console.log(formFields);
+  // console.log(formFields);
 
   const resetFormFields = () => {
     setFormFields(defaultFormFields);
@@ -40,7 +40,7 @@ const SignUpForm = () => {
         email,
         password
       );
-      console.log(user);
+
       await createUserDocumentFromAuth(user, { displayName }); //displayName being spread
       resetFormFields();
     } catch (error) {

@@ -6,6 +6,8 @@ import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword, //method by firebase
   signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
 } from "firebase/auth";
 //just like getAuth, we need to instantiate our firestore instance
 //doc method retrieve documents inside of our firestore database, doc get the document's instance
@@ -52,11 +54,11 @@ export const createUserDocumentFromAuth = async (
   if (!userAuth) return; //if we dont receive the useAuth argument, just dont run the function
 
   const userDocRef = doc(db, "users", userAuth.uid); //Hey, give me the document reference inside of this database, under the user collection, with user Auth id
-  console.log(userDocRef);
+  // console.log(userDocRef);
 
   const userSnapshot = await getDoc(userDocRef); //get the data from our userDocRef: allow us to check whether or not there is an instance that exist and allow us to access the data
-  console.log(userSnapshot);
-  console.log(userSnapshot.exists());
+  // console.log(userSnapshot);
+  // console.log(userSnapshot.exists());
 
   //if user data does not exists
   //create / set the document with the data from userAuth in my collection
@@ -81,6 +83,7 @@ export const createUserDocumentFromAuth = async (
   return userDocRef;
 };
 
+//Interface layer functions//
 export const createAuthUserWithEmailAndPassword = async (email, password) => {
   if (!email || !password) return;
   return await createUserWithEmailAndPassword(auth, email, password);
@@ -90,3 +93,8 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) => {
   if (!email || !password) return;
   return await signInWithEmailAndPassword(auth, email, password);
 };
+
+export const signOutUser = async () => await signOut(auth); //auth is also keeping track of what users are signed in right now
+
+export const onAuthStateChangedListener = (callback) =>
+  onAuthStateChanged(auth, callback);
