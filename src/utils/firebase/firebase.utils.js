@@ -13,7 +13,16 @@ import {
 //doc method retrieve documents inside of our firestore database, doc get the document's instance
 //use getDoc access the document's data
 //use setDoc to sets/update the document's data
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore"; //firestore is a different service
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  writeBatch,
+  query,
+  getDocs,
+} from "firebase/firestore"; //firestore is a different service
 
 const firebaseConfig = {
   apiKey: "AIzaSyAyO9kKT3T6sThuMJTGafqkTCWBipvfhls",
@@ -43,6 +52,49 @@ export const signInWithGooglePopup = () =>
 
 //Firestore Setup
 export const db = getFirestore(); //Instantiate our firestore, now we can use it to access our database
+
+//objectsToAdd is the actual document that we want to add
+//put data to firestore database
+export const addCollectionAndDocuments = async (
+  collectionKey,
+  objectsToAdd
+) => {
+  const collectionRef = collection(db, collectionKey);
+  const batch = writeBatch(db);
+
+  objectsToAdd.forEach((object) => {
+    const docRef = doc(collectionRef, object.title.toLowerCase());
+    batch.set(docRef, object);
+  });
+
+  await batch.commit();
+  console.log("done!");
+};
+
+//get data from firestore
+export const getCategoriesAndDocuments = async () => {
+  const collectionRef = collection(db, "categories");
+  const q = query(collectionRef);
+
+  const querySnapshot = await getDocs(q);
+  // console.log(querySnapshot.docs);
+
+  //testing map
+  // querySnapshot.docs.map((snapshot) => {
+  //   console.log(snapshot.data());
+  // });
+
+  //initial value as an empty object
+  const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
+    // console.log(docSnapshot.data());
+    // console.log(acc);
+    const { title, items } = docSnapshot.data();
+    acc[title.toLowerCase()] = items;
+    return acc;
+  }, {});
+
+  return categoryMap;
+};
 
 export const createUserDocumentFromAuth = async (
   userAuth,
